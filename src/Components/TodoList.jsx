@@ -4,6 +4,8 @@ const TodoList = () => {
     const [todos,setTodos] = useState([]);
     const [headingInput, setHeadingInput] = useState('');
     const [listInputs, setListInputs] = useState({});
+    const [isVisible,setIsvisible] = useState(false);
+    const [buttonText,setButtonText] = useState('Show');
 
     const handleAddTodo = () => {
         if (headingInput.trim() !== ''){
@@ -15,7 +17,11 @@ const TodoList = () => {
         const newTodos = [...todos];
         newTodos.splice(index, 1);
         setTodos(newTodos);
-      };
+        if (newTodos[index].lists.length === 0) {
+            setIsvisible(false);
+            setButtonText('Show');
+          }
+        };        
 
     const handleAddList = (index) => {
         if (listInputs[index] && listInputs[index].trim !== ''){
@@ -23,11 +29,19 @@ const TodoList = () => {
             newTodos[index].lists.push(listInputs[index]);
             setTodos(newTodos);
             setListInputs({...listInputs, [index]: ''});
+            setIsvisible(true);
+            setButtonText('Hide');
+
         }
     };
     const handleListInputChange = (index,value) => {
         setListInputs({...listInputs,[index]: value});
     };
+    const showList = () => {
+            setIsvisible(!isVisible)
+            setButtonText(isVisible ? 'Show' : 'Hide');
+        
+    }
 
     return(
         <>
@@ -41,7 +55,8 @@ const TodoList = () => {
                         value={headingInput}
                         onChange={(e) => {setHeadingInput(e.target.value)}}
                         />
-                    <button onClick={handleAddTodo} className="bg-emerald-400 text-neutral-100 px-6 py-2 rounded-md border-0 font-bold hover:bg-teal-600">Add Heading</button>    
+                    <button onClick={handleAddTodo} className="bg-emerald-400 text-neutral-100 px-6 py-2 rounded-md border-0 font-bold
+                        hover:bg-teal-600">Add Heading</button>      
                 </div>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -68,10 +83,16 @@ const TodoList = () => {
           onChange={(e) => handleListInputChange(index, e.target.value)}
         />
         <button 
-          className="bg-emerald-400 text-neutral-100 px-6 py-2 rounded-md border-0 font-bold hover:bg-teal-600"
+          className="bg-emerald-400 text-neutral-100 px-6 py-2 mx-2 rounded-md border-0 font-bold hover:bg-teal-600"
           onClick={() => handleAddList(index)}
         >
           Add List
+        </button>
+        <button 
+          className="bg-emerald-400 text-neutral-100 px-6 py-2 rounded-md border-0 font-bold hover:bg-teal-600"
+          onClick={showList}
+        >
+          {buttonText} List
         </button>
         <ul>
           {todo.lists.map((list, listIndex) => (
